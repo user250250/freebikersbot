@@ -7,10 +7,12 @@ from zoneinfo import ZoneInfo
 
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
 TZ_NAME = os.environ.get("TZ", "Europe/Zaporozhye")
 TZ = ZoneInfo(TZ_NAME)
+DTEK_TG_BOT_URL = "https://t.me/DTEKDniprovskiElektromerezhiBot"
 
 DATA_FILE = "group_bot_data.json"
 
@@ -182,6 +184,19 @@ async def duty(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(f"🫡 Дежурная на эту неделю: {who}\n(она пишет всем и собирает план 😄)")
 
+async def dtek_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not ensure_group(update):
+        return
+
+    kb = InlineKeyboardMarkup([
+        [InlineKeyboardButton("Открыть Telegram-бот ДТЭК", url=DTEK_TG_BOT_URL)]
+    ])
+
+    await update.message.reply_text(
+        "⚡️ ДТЭК (Дніпро)\n\n"
+        "Открой официальный Telegram-бот ДТЭК Дніпровські електромережі — там можно смотреть отключения/графики.",
+        reply_markup=kb
+    )
 
 def main():
     if not TOKEN:
@@ -197,6 +212,7 @@ def main():
     app.add_handler(CommandHandler("random", random_plan))
     app.add_handler(CommandHandler("remind", remind))
     app.add_handler(CommandHandler("duty", duty))
+app.add_handler(CommandHandler("dtek", dtek_cmd))
 
     print("Bot is running...")
     app.run_polling(allowed_updates=Update.ALL_TYPES)
