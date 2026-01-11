@@ -212,7 +212,7 @@ def main():
     app.add_handler(CommandHandler("random", random_plan))
     app.add_handler(CommandHandler("remind", remind))
     app.add_handler(CommandHandler("duty", duty))
-app.add_handler(CommandHandler("dtek", dtek_cmd))
+    app.add_handler(CommandHandler("dtek", dtek_cmd))
 
     print("Bot is running...")
     app.run_polling(allowed_updates=Update.ALL_TYPES)
